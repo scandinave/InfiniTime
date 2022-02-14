@@ -19,7 +19,7 @@
 namespace Pinetime {
     
     namespace System {
-        class SystemTask
+        class SystemTask;
     }
 
     namespace Controllers {

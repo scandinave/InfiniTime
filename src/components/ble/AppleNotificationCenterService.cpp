@@ -38,6 +38,7 @@ AppleNotificationCenterService::AppleNotificationCenterService(System::SystemTas
     systemTask {systemTask},
     notificationManager {notificationManager} {}
 
+// Handle notification
 int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt) {
   if (ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR) {
     Event event;
@@ -52,6 +53,35 @@ int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_
     os_mbuf_copydata(ctxt->om, 2, 1, &category);
     os_mbuf_copydata(ctxt->om, 3, 1, &categoryCount);
     os_mbuf_copydata(ctxt->om, 4, 32, &notificationUUID);
+
+    switch (category) {
+      case Category::Email:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::Email;
+        break;
+      case Category::IncomingCall:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::IncomingCall;
+        break;
+      case Category::MissedCall:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::MissedCall;
+        break;
+      case Category::News:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::News;
+        break;
+      case Category::Schedule:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::Sms;
+        break;
+      case Category::Voicemail:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::VoiceMail;
+        break;
+      default:
+        notif.category = Pinetime::Controllers::NotificationManager::Categories::SimpleAlert;
+        break;
+    }
+    
+    auto notifEvent = Pinetime::System::Messages::OnNewNotification;
+    notificationManager.Push(std::move(notif));
+    systemTask.PushMessage(notifEvent);
+ 
   }
   return 0;
 }
