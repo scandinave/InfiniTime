@@ -31,6 +31,12 @@ namespace Pinetime {
                 void Init();
                 
                 int OnAlert(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt);
+
+                int OnData(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access ctxt* ctxt);
+
+                void GetNotificationAttribute();
+                void GetAppAttributes();
+                void PerformNotificationAction();
             private:
                /**
                * see: https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/Appendix/Appendix.html#//apple_ref/doc/uid/TP40013460-CH3-SW2

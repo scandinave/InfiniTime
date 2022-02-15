@@ -9,9 +9,14 @@ constexpr ble_uuid128_t AppleNotificationCenterService::ancsChar;
 constexpr ble_uuid128_t AppleNotificationCenterService::dataSourceChar;
 constexpr ble_uuid128_t AppleNotificationCenterService::controlPointChar;
 
-int AppleNotificationCenterCallback(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt, void* arg) {
+int AppleNotificationCenterAlertCallback(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt, void* arg) {
   auto ancService = static_cast<AppleNotificationCenterService*>(arg);
   return ancService->OnAlert(conn_handle, attr_handle, ctxt);
+}
+
+int AppleNotificationCenterDataCallback(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt, void* arg) {
+  auto ancService = static_cast<AppleNotificationCenterService*>(arg);
+  return ancService->OnData(conn_handle, attr_handle, ctxt);
 }
 
 void AppleNotificationCenterService::Init() {
@@ -25,8 +30,10 @@ void AppleNotificationCenterService::Init() {
 
 AppleNotificationCenterService::AppleNotificationCenterService(System::SystemTask& systemTask, NotificationManager& notificationManager)
   : characteristicDefinition {
-    {.uuid = &ancsChar.u, .access_cb = AppleNotificationCenterCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
-    {.uuid =  0}},
+    {.uuid = &ancsChar.u, .access_cb = AppleNotificationCenterAlertCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
+    {.uuid = &controlPointChar}, // TODO
+    {.uuid = &dataSourceChar, .access_cb = AppleNotificationCenterAlertCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
+    {0}},
     serviceDefinition {
       {/* Device Information Service */
        .type = BLE_GATT_SVC_TYPE_PRIMARY,
@@ -85,3 +92,16 @@ int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_
   }
   return 0;
 }
+
+// Handle data from dataSourceChar
+int AppleNotificationCenterService::OnData(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt) {
+
+}
+
+// Send a Get Notification Attributes command to Control Point
+void AppleNotificationCenterService::GetNotificationAttribute() {}
+// Send a Get App Attributes command to Control Point
+void AppleNotificationCenterService::GetAppAttributes() {}
+// Send a Perform Notification Action command to Control Point
+void AppleNotificationCenterService::PerformNitificationAction() {}
+
