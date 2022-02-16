@@ -5,6 +5,7 @@
 
 using namespace Pinetime::Controllers;
 
+constexpr ble_uuid128_t AppleNotificationCenterService::ancsSvc;
 constexpr ble_uuid128_t AppleNotificationCenterService::ancsChar;
 constexpr ble_uuid128_t AppleNotificationCenterService::dataSourceChar;
 constexpr ble_uuid128_t AppleNotificationCenterService::controlPointChar;
@@ -31,13 +32,12 @@ void AppleNotificationCenterService::Init() {
 AppleNotificationCenterService::AppleNotificationCenterService(System::SystemTask& systemTask, NotificationManager& notificationManager)
   : characteristicDefinition {
     {.uuid = &ancsChar.u, .access_cb = AppleNotificationCenterAlertCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
-    {.uuid = &controlPointChar}, // TODO
-    {.uuid = &dataSourceChar, .access_cb = AppleNotificationCenterAlertCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
+    {.uuid = &dataSourceChar.u, .access_cb = AppleNotificationCenterDataCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
     {0}},
     serviceDefinition {
       {/* Device Information Service */
        .type = BLE_GATT_SVC_TYPE_PRIMARY,
-       .uuid = &ancsChar.u,
+       .uuid = &ancsSvc.u,
        .characteristics = characteristicDefinition
       },
       {0},
@@ -103,5 +103,5 @@ void AppleNotificationCenterService::GetNotificationAttribute() {}
 // Send a Get App Attributes command to Control Point
 void AppleNotificationCenterService::GetAppAttributes() {}
 // Send a Perform Notification Action command to Control Point
-void AppleNotificationCenterService::PerformNitificationAction() {}
+void AppleNotificationCenterService::PerformNotificationAction() {}
 

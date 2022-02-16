@@ -32,7 +32,7 @@ namespace Pinetime {
                 
                 int OnAlert(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt);
 
-                int OnData(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access ctxt* ctxt);
+                int OnData(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt);
 
                 void GetNotificationAttribute();
                 void GetAppAttributes();
@@ -96,6 +96,8 @@ namespace Pinetime {
                 enum class AppAttribute : uint8_t {
                   DisplayName = 0x00
                 };
+                
+                static constexpr ble_uuid128_t ancsSvc { { BLE_UUID_TYPE_128}, APPLE_NOTIFICATION_CENTER_SERVICE_UUID_BASE};
 
                 // 9FBF120D-6301-42D9-8C58-25E699A21DBD
                 static constexpr ble_uuid128_t ancsChar { {BLE_UUID_TYPE_128}, {0xBD, 0x1D, 0xA2, 0x99,
