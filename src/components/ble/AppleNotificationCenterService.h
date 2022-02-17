@@ -113,7 +113,7 @@ namespace Pinetime {
                                                                    {0xFB, 0x7B, 0x7C, 0xCE, 0x6A, 0xB3,
                                                                     0x44, 0X3E,0xB5, 0x0B,0xD6, 0x24, 0xE9,
                                                                     0xC6, 0xEA, 0x22 }};
-                struct ble_gatt_chr_def characteristicDefinition[2];
+                struct ble_gatt_chr_def characteristicDefinition[4];
                 struct ble_gatt_svc_def serviceDefinition[2];
                 
                 Pinetime::System::SystemTask& systemTask;

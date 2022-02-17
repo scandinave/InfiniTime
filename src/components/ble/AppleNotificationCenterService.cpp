@@ -95,7 +95,7 @@ int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_
 
 // Handle data from dataSourceChar
 int AppleNotificationCenterService::OnData(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt) {
-
+  return 0;
 }
 
 // Send a Get Notification Attributes command to Control Point
