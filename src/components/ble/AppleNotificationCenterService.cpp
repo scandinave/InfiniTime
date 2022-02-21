@@ -35,13 +35,13 @@ AppleNotificationCenterService::AppleNotificationCenterService(System::SystemTas
       .uuid = &ancsChar.u, 
       .access_cb = AppleNotificationCenterAlertCallback, 
       .arg = this, 
-      .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHOR
+      .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHEN
     },
     { 
       .uuid = &dataSourceChar.u, 
       .access_cb = AppleNotificationCenterDataCallback, 
       .arg = this, 
-      .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHOR
+      .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHEN
     },
     {0}
   },
