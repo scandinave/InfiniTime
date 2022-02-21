@@ -31,19 +31,31 @@ void AppleNotificationCenterService::Init() {
 
 AppleNotificationCenterService::AppleNotificationCenterService(System::SystemTask& systemTask, NotificationManager& notificationManager)
   : characteristicDefinition {
-    {.uuid = &ancsChar.u, .access_cb = AppleNotificationCenterAlertCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
-    {.uuid = &dataSourceChar.u, .access_cb = AppleNotificationCenterDataCallback, .arg = this, .flags = BLE_GATT_CHR_F_NOTIFY},
-    {0}},
-    serviceDefinition {
-      {/* Device Information Service */
-       .type = BLE_GATT_SVC_TYPE_PRIMARY,
-       .uuid = &ancsSvc.u,
-       .characteristics = characteristicDefinition
-      },
-      {0},
+    {
+      .uuid = &ancsChar.u, 
+      .access_cb = AppleNotificationCenterAlertCallback, 
+      .arg = this, 
+      .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHOR
     },
-    systemTask {systemTask},
-    notificationManager {notificationManager} {}
+    { 
+      .uuid = &dataSourceChar.u, 
+      .access_cb = AppleNotificationCenterDataCallback, 
+      .arg = this, 
+      .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHOR
+    },
+    {0}
+  },
+  serviceDefinition {
+    {/* Device Information Service */
+      .type = BLE_GATT_SVC_TYPE_PRIMARY,
+      .uuid = &ancsSvc.u,
+      .characteristics = characteristicDefinition
+    },
+    {0},
+  },
+  systemTask {systemTask},
+  notificationManager {notificationManager} {
+}
 
 // Handle notification
 int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt* ctxt) {
@@ -59,7 +71,7 @@ int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_
     os_mbuf_copydata(ctxt->om, 1, 1, &eventFlag);
     os_mbuf_copydata(ctxt->om, 2, 1, &category);
     os_mbuf_copydata(ctxt->om, 3, 1, &categoryCount);
-    os_mbuf_copydata(ctxt->om, 4, 32, &notificationUUID);
+    os_mbuf_copydata(ctxt->om, 4, 4, &notificationUUID);
 
     switch (category) {
       case Category::Email:
@@ -84,7 +96,10 @@ int AppleNotificationCenterService::OnAlert(uint16_t conn_handle, uint16_t attr_
         notif.category = Pinetime::Controllers::NotificationManager::Categories::SimpleAlert;
         break;
     }
-    
+
+    notif.message = std::array<char, 101> {"Hello\0World"};
+    notif.size = 11;
+
     auto notifEvent = Pinetime::System::Messages::OnNewNotification;
     notificationManager.Push(std::move(notif));
     systemTask.PushMessage(notifEvent);
